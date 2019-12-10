@@ -40,7 +40,7 @@ Flash using `idf.py -p /dev/tty.SLAB_USBtoUART flash`
 
 ## Utils
 
-### SixaxisPairTool
+### [SixaxisPairTool](https://dancingpixelstudios.com/sixaxis-controller/sixaxispairtool/)
 
 Configure the PS3 controller to connect to the ESP32. Connect the PS3 controller to your Mac and run the following with the MAC address of the ESP32:
 
