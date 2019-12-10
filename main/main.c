@@ -5,31 +5,53 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define BLINK_GPIO 2
+#define STATUS_LED_GPIO 2
+#define START_LED_GPIO 5
 
+bool isStarted = false;
 
-void controller_event_cb( ps3_t ps3, ps3_event_t event )
-{
+void toggleStart(void) {
+  isStarted = !isStarted;
+  gpio_set_level(START_LED_GPIO, isStarted ? 1 : 0);
+}
+
+void controller_event_cb(ps3_t ps3, ps3_event_t event) {
+  if(event.button_up.start) {
+    toggleStart();
+  }
+
+  // Don't process the rest of the events when we haven't started yet.
+  if(!isStarted) {
+    return;
+  }
+
+  if(event.analog_changed.stick.rx) {
+    printf("leftx %i", event.analog_changed.stick.lx);
+  }
+
+  /*
     if ( event.button_down.cross ) {
-      gpio_set_level(BLINK_GPIO, 1);
+      gpio_set_level(START_LED_GPIO, 1);
     }
 
     if ( event.button_up.cross ) {
-      gpio_set_level(BLINK_GPIO, 0);
+      gpio_set_level(START_LED_GPIO, 0);
     }
+    */
+}
+
+void init_gpio(void)
+{
+  gpio_pad_select_gpio(STATUS_LED_GPIO);
+  gpio_set_direction(STATUS_LED_GPIO, GPIO_MODE_OUTPUT);
+
+  gpio_pad_select_gpio(START_LED_GPIO);
+  gpio_set_direction(START_LED_GPIO, GPIO_MODE_OUTPUT);
 }
 
 void app_main(void)
 {
-  /* Configure the IOMUX register for pad BLINK_GPIO (some pads are
-     muxed to GPIO on reset already, but some default to other
-     functions and need to be switched to GPIO. Consult the
-     Technical Reference for a list of pads and their default
-     functions.)
-  */
-  gpio_pad_select_gpio(BLINK_GPIO);
-  /* Set the GPIO as a push/pull output */
-  gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
+  init_gpio();
 
   nvs_flash_init();
 
@@ -49,18 +71,25 @@ void app_main(void)
   }
 
   ps3SetEventCallback(controller_event_cb);
+
   ps3Init();
 
-  printf("Waiting for PS3 controller");
+  printf("Waiting for PS3 controller\n");
+  bool blink = false;
   while (!ps3IsConnected()){
-      printf(".");
+      gpio_set_level(STATUS_LED_GPIO, blink ? 1 : 0);
+      blink = !blink;
       // Prevent the Task Watchdog from triggering
-      vTaskDelay(10 / portTICK_PERIOD_MS);
+      vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 
-  ps3Enable();
-  printf("PS3 controller connected");
+  // 250ms delay after connecting is necessary to allow the channel to clear
+  // before pushing the LED configuration.
+  vTaskDelay(250 / portTICK_PERIOD_MS);
   ps3SetLed(1);
+  ps3Enable();
+  gpio_set_level(STATUS_LED_GPIO, 1);
+  printf("PS3 controller connected");
 
   while (1) {
     vTaskDelay(10 / portTICK_PERIOD_MS);
