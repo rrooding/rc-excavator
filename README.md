@@ -45,4 +45,3 @@ Flash using `idf.py -p /dev/tty.SLAB_USBtoUART flash`
 Configure the PS3 controller to connect to the ESP32. Connect the PS3 controller to your Mac and run the following with the MAC address of the ESP32:
 
 `$ ./sixpair 11:22:33:44:55:66`
-

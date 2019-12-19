@@ -6,9 +6,10 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
-#define STATUS_LED_GPIO 2
-#define START_LED_GPIO 5
-#define SERVO_PIN 13
+#define STATUS_LED_GPIO GPIO_NUM_2
+#define START_LED_GPIO GPIO_NUM_5
+#define SERVO_0_PIN GPIO_NUM_13
+#define SERVO_1_PIN GPIO_NUM_12
 
 #define SERVO_MIN_PWM 600
 #define SERVO_MAX_PWM 2360
@@ -57,7 +58,8 @@ void set_up_servos() {
     ledc_timer_config(&timer_config);
 
     // configure servos
-    set_up_servo(0, SERVO_PIN);
+    set_up_servo(0, SERVO_0_PIN);
+    set_up_servo(1, SERVO_1_PIN);
 }
 
 
@@ -93,6 +95,10 @@ void controller_event_cb(ps3_t ps3, ps3_event_t event) {
   if(ps3.analog.stick.lx) {
     set_pulse(0, ps3.analog.stick.lx);
   }
+
+  if(ps3.analog.stick.ly) {
+    set_pulse(1, ps3.analog.stick.ly);
+  }
 }
 
 void init_gpio(void)
@@ -106,14 +112,21 @@ void init_gpio(void)
 
 void app_main(void)
 {
+  // Initialize NVS flash, it is used by the PS3 library
+  esp_err_t ret = nvs_flash_init();
+  if(ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+    ESP_ERROR_CHECK(nvs_flash_erase());
+    ret = nvs_flash_init();
+  }
+  ESP_ERROR_CHECK(ret);
+
   init_gpio();
 
   set_up_servos();
 
-  nvs_flash_init();
-
+  // Get base MAC address
   uint8_t mac_addr[8] = {0};
-  esp_err_t ret = ESP_OK;
+  ret = ESP_OK;
 
   ret = esp_efuse_mac_get_default(mac_addr);
   if (ret != ESP_OK) {
@@ -146,5 +159,5 @@ void app_main(void)
   vTaskDelay(250 / portTICK_PERIOD_MS);
   ps3Enable();
   gpio_set_level(STATUS_LED_GPIO, 1);
-  printf("PS3 controller connected");
+  printf("PS3 controller connected\n");
 }
