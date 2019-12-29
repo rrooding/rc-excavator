@@ -6,6 +6,7 @@ Make sure you have installed all of the following prerequisites on your developm
 
 * ESP-IDF 4.1-dev
 * ESP32-PS3 component in the ESP-IDF components folder ([rrooding/esp32-ps3](https://github.com/rrooding/esp32-ps3/tree/feature/esp-idf-4-support) for now).
+* libusb-compat 0.1.5 (brew install libusb-compat)
 
 ## Configuration
 
