@@ -1,6 +1,8 @@
 #ifndef EXCAVATOR
 #define EXCAVATOR
 
+#include <stdbool.h>
+
 typedef struct Excavator Excavator;
 
 Excavator *ExcavatorCreate();

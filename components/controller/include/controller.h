@@ -3,7 +3,7 @@
 
 #include "driver/gpio.h"
 
-typedef void(*controller_event_callback_t)();
+typedef void (*controller_event_callback_t)();
 
 void controller_init(gpio_num_t gpio_num);
 
