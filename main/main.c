@@ -85,7 +85,6 @@
 //   gpio_set_level(START_LED_GPIO, isStarted ? 1 : 0);
 // }
 //
-// int8_t prev = 0;
 // void controller_event_cb(ps3_t ps3, ps3_event_t event) {
 //  if(event.button_up.start) {
 //    toggleStart();

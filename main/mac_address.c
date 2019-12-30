@@ -1,7 +1,7 @@
 #include "esp_log.h"
 #include "esp_system.h"
 
-#define TAG "mac_address"
+#define TAG "EX_MAC"
 
 void mac_address_print_bt_addr() {
   uint8_t mac_addr[8] = {0};
