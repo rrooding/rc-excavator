@@ -4,5 +4,8 @@
 #include "hal/gpio_types.h"
 
 #define GPIO_CONTROLLER_STATUS_LED GPIO_NUM_2
+#define GPIO_SWING GPIO_NUM_18
+#define GPIO_LEFT_TRACK GPIO_NUM_19
+#define GPIO_RIGHT_TRACK GPIO_NUM_21
 
 #endif

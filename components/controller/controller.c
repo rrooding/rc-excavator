@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "controller.h"
 #include "esp_log.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -8,11 +9,55 @@
 
 #define TAG "EX_CONTROLLER"
 
-bool controller_is_connected() { return ps3IsConnected(); }
+static controller_event_callback_t controller_event_cb;
+static void *controller_event_cb_context;
 
-void ps3_event_cb(ps3_t ps3, ps3_event_t event) {
-  if (ps3.analog.stick.lx) {
-    ESP_LOGI(TAG, "Event detected %i", ps3.analog.stick.lx);
+void ps3_event_cb(ps3_t ps3, ps3_event_t ps3_event) {
+  if (controller_event_cb) {
+    controller_event_t event;
+
+    event.left_joystick.x = ps3.analog.stick.lx;
+    event.left_joystick.y = ps3.analog.stick.ly;
+    event.right_joystick.x = ps3.analog.stick.rx;
+    event.right_joystick.y = ps3.analog.stick.ry;
+
+    event.up.button_up = ps3_event.button_up.up;
+    event.up.button_down = ps3_event.button_down.up;
+    event.down.button_up = ps3_event.button_up.down;
+    event.down.button_down = ps3_event.button_down.down;
+    event.left.button_up = ps3_event.button_up.left;
+    event.left.button_down = ps3_event.button_down.left;
+    event.right.button_up = ps3_event.button_up.right;
+    event.right.button_down = ps3_event.button_down.right;
+
+    event.l1.button_up = ps3_event.button_up.l1;
+    event.l1.button_down = ps3_event.button_down.l1;
+    event.l1.analog = ps3.analog.button.l1;
+    event.l2.button_up = ps3_event.button_up.l2;
+    event.l2.button_down = ps3_event.button_down.l2;
+    event.l2.analog = ps3.analog.button.l2;
+    event.r1.button_up = ps3_event.button_up.r1;
+    event.r1.button_down = ps3_event.button_down.r1;
+    event.r1.analog = ps3.analog.button.r1;
+    event.r2.button_up = ps3_event.button_up.r2;
+    event.r2.button_down = ps3_event.button_down.r2;
+    event.r2.analog = ps3.analog.button.r2;
+
+    event.start.button_up = ps3_event.button_up.start;
+    event.start.button_down = ps3_event.button_down.start;
+    event.select.button_up = ps3_event.button_up.select;
+    event.select.button_down = ps3_event.button_down.select;
+
+    event.a.button_up = ps3_event.button_up.cross;
+    event.a.button_down = ps3_event.button_down.cross;
+    event.b.button_up = ps3_event.button_up.circle;
+    event.b.button_down = ps3_event.button_down.circle;
+    event.x.button_up = ps3_event.button_up.square;
+    event.x.button_down = ps3_event.button_down.square;
+    event.y.button_up = ps3_event.button_up.triangle;
+    event.y.button_down = ps3_event.button_down.triangle;
+
+    controller_event_cb(controller_event_cb_context, event);
   }
 }
 
@@ -66,3 +111,11 @@ void controller_init(gpio_num_t gpio_num) {
   xTaskCreate(&controller_handle_connection, "controller_handle_connection",
               2048, (void *)gpio_num, 5, NULL);
 }
+
+void controller_set_event_callback(controller_event_callback_t cb,
+                                   void *context) {
+  controller_event_cb = cb;
+  controller_event_cb_context = context;
+}
+
+bool controller_is_connected() { return ps3IsConnected(); }
