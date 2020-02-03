@@ -27,6 +27,6 @@ void app_main(void) {
 
   mac_address_print_bt_addr();
 
-  controller_set_event_callback(ExcavatorControllerCallback, &ex);
+  controller_set_event_callback(ExcavatorControllerCallback, ex);
   controller_init(GPIO_CONTROLLER_STATUS_LED);
 }

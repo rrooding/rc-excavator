@@ -5,7 +5,8 @@
 #include "servo.h"
 
 typedef struct {
-  Servo *swing;
+  Servo *leftTrack;
+  Servo *rightTrack;
 } excavator_motors_t;
 
 struct Excavator {
@@ -20,7 +21,7 @@ struct Excavator {
 void ExcavatorInitialize(Excavator *this);
 
 // Calculate the track speed based on the input speed and the direction. Input is a
-// speed between 0 and 256, output is a speed between -127 and 0 when the direction is
+// speed between 0 and 255, output is a speed between -127 and 0 when the direction is
 // reverse, and 1 to 128 when the direction is forward.
 int8_t ExcavatorCalculateTrackSpeed(bool forward, uint8_t speed);
 
