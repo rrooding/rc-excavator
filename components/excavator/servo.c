@@ -19,7 +19,7 @@ static servo_pwm_t mg996rPWM = {
 };
 
 static ledc_timer_config_t mg996rTimer = {
-  .bit_num = bit_resolution,
+  .duty_resolution = bit_resolution,
   .freq_hz = frequency,
   .speed_mode = LEDC_HIGH_SPEED_MODE,
   .timer_num = LEDC_TIMER_0
