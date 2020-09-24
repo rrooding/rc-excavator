@@ -21,3 +21,7 @@ void mac_address_print_bt_addr() {
 
   ESP_LOGI(TAG, "Bluetooth MAC address: %s", mac_str);
 }
+
+esp_err_t mac_address_set(uint8_t *mac_address) {
+  return esp_base_mac_addr_set(mac_address);
+}

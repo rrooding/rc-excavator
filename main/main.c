@@ -8,7 +8,7 @@
 
 #include "controller.h"
 #include "excavator.h"
-#include "gpio_bindings.h"
+#include "pin_bindings.h"
 #include "mac_address.h"
 
 #define TAG "EX_MAIN"
@@ -28,5 +28,5 @@ void app_main(void) {
   mac_address_print_bt_addr();
 
   controller_set_event_callback(ExcavatorControllerCallback, ex);
-  controller_init(GPIO_CONTROLLER_STATUS_LED);
+  controller_init(CONTROLLER_STATUS_LED);
 }
