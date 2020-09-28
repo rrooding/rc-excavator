@@ -19,6 +19,9 @@ Excavator *ExcavatorCreate() {
 void ExcavatorFree(Excavator *this) { 
   ServoFree(this->motors.leftTrack);
   ServoFree(this->motors.rightTrack);
+
+  AudioFree(this->audio);
+
   free(this);
 }
 
@@ -33,6 +36,8 @@ void ExcavatorInitialize(Excavator *this) {
 
   this->motors.leftTrack = ServoCreate(LEFT_TRACK);
   this->motors.rightTrack = ServoCreate(RIGHT_TRACK);
+
+  this->audio = AudioCreate();
 }
 
 void ExcavatorControllerCallback(void *context, controller_event_t event) {
@@ -69,22 +74,14 @@ void ExcavatorControllerCallback(void *context, controller_event_t event) {
 
 bool ExcavatorIsStarted(Excavator *this) { return this->started; }
 
-// Temporary
-#include <driver/dac.h>
-
 void ExcavatorStart(Excavator *this) {
   this->started = true;
 
-  // Temporary for testing the DAC
-  dac_output_enable(SPEAKER);
-  dac_output_voltage(SPEAKER, 200); // output should be ~2.59V
+  AudioPlay(this->audio);
 }
 
 void ExcavatorStop(Excavator *this) {
   this->started = false;
-
-  dac_output_voltage(SPEAKER, 0);
-  dac_output_disable(SPEAKER);
 }
 
 void ExcavatorLeftTrackReverse(Excavator *this) { this->left_track_forward = false; }

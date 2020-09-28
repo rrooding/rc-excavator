@@ -47,3 +47,14 @@ Flash using `idf.py -p /dev/tty.SLAB_USBtoUART flash`
 Configure the PS3 controller to connect to the ESP32. Connect the PS3 controller to your Mac and run the following with the MAC address of the ESP32:
 
 `$ ./sixpair 11:22:33:44:55:66`
+
+
+## Audio
+
+Source files are in the assets folder, these are not included in the build but are converted to C char[]'s using xxd.
+
+Source files should also be prepared in Audacity first. Set the Sample Rate to 8000, choose export > as wav and select unsigned 8 bit PCM.
+
+To convert an audio file, run the following command:
+
+`$ xxd -i assets/<file>.wav > components/excavator/<file>.h`

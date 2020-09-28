@@ -3,6 +3,7 @@
 
 #include "excavator.h"
 #include "servo.h"
+#include "audio.h"
 
 typedef struct {
   Servo *leftTrack;
@@ -16,6 +17,7 @@ struct Excavator {
   int8_t left_track_speed;
   int8_t right_track_speed;
   excavator_motors_t motors;
+  Audio *audio;
 };
 
 void ExcavatorInitialize(Excavator *this);
